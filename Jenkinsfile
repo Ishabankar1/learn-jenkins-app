@@ -5,14 +5,17 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Build stage'
+                sh 'npm install'
+                sh 'npm run build'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Test stage'
-                sh 'ls build/index.html'
+                sh 'npm test -- --watch=false'
             }
         }
     }
 }
+
