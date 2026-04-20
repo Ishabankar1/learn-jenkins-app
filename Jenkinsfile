@@ -1,10 +1,13 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:18-alpine'
+        }
+    }
 
     stages {
         stage('Build') {
             steps {
-                echo 'Build stage'
                 sh 'npm install'
                 sh 'npm run build'
             }
@@ -12,7 +15,6 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo 'Test stage'
                 sh 'npm test -- --watch=false'
             }
         }
