@@ -19,5 +19,11 @@ pipeline {
             }
         }
     }
+    
+    post {
+        always {
+            junit 'test-results/jnuit.xml'
+        }
+    }
 }
 
