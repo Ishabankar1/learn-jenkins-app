@@ -1,8 +1,8 @@
 pipeline {
     agent any
 
-    environment{
-        NETLIY_SITE_ID = '82943bb5-1af0-4bba-aca0-0dc5997f6341'
+    environment {
+        NETLIFY_SITE_ID = '82943bb5-1af0-4bba-aca0-0dc5997f6341'
     }
 
     stages {
@@ -54,8 +54,8 @@ pipeline {
                 '''
             }
         }
-
     }
 }
+``
 
 
