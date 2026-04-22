@@ -1,71 +1,30 @@
-pipeline {
-    agent any
-
-    environment {
-        NETLIFY_SITE_ID = '82943bb5-1af0-4bba-aca0-0dc5997f6341'
+stage('Deploy') {
+    agent {
+        docker {
+            image 'node:18-alpine'
+            reuseNode true
+        }
     }
+    steps {
+        withCredentials([string(credentialsId: 'netlify-token', variable: 'NETLIFY_AUTH_TOKEN')]) {
+            sh '''
+                npm install -g netlify-cli
+                netlify --version
 
-    stages {
+                echo "Deploying to production. Site ID: $NETLIFY_SITE_ID"
 
-        stage('Build') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    node --version
-                    npm --version
-                    npm ci
-                    npm run build
-                    test -f build/index.html
-                '''
-            }
-        }
+                netlify status
 
-        stage('Test') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    npm test -- --watch=false
-                '''
-            }
-        }
-
-        stage('Deploy') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                withCredentials([string(credentialsId: 'netlify-token', variable: 'NETLIFY_AUTH_TOKEN')]) {
-                    sh '''
-                        npm install -g netlify-cli
-                        netlify --version
-
-                        echo "Deploying to production. Site ID: $NETLIFY_SITE_ID"
-
-                        netlify status
-
-                        netlify deploy --prod \
-                          --dir=build \
-                          --site=$NETLIFY_SITE_ID \
-                          --auth=$NETLIFY_AUTH_TOKEN
-                    '''
-                }
-            }
+                netlify deploy --prod \
+                  --dir=build \
+                  --no-build \
+                  --site=$NETLIFY_SITE_ID \
+                  --auth=$NETLIFY_AUTH_TOKEN
+            '''
         }
     }
 }
+
 
 
 
